@@ -26,10 +26,18 @@ def gen_password():
     with open("passwords.txt", "a") as passwords:
         passwords.write(f"{website} : {password}\n")
 
-def get_passwords():
+def get_password_list():
     print('')
     with open("passwords.txt", "r") as passwords:
         print(passwords.read())
+
+def get_password():
+    website = input("\nEnter where this password is for: ")
+    print('')
+    with open("passwords.txt", "r") as passwords:
+        for line in passwords:
+            if website in line:
+                print(line)
 
 def delete_password():
     website = input("\nEnter where this password is for: ")
@@ -71,7 +79,12 @@ if __name__ == "__main__":
             gen_password()
             
         elif user_input == "get":
-            get_passwords()
+            print("\nIf you would like to get a specific password, type 'one'. If you would like all passwords, type 'all'.\n")
+            user_input = input("What would you like to do? (one, all): ")
+            if (user_input == "one"):
+                get_password()
+            elif (user_input == "all"):
+                get_password_list()
 
         elif user_input == "del":
             delete_password()
