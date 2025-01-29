@@ -1,6 +1,7 @@
 import random
 import string
 
+
 def get_input():
     user_input = input("What would you like to do? (own, gen, get, del, cha, q): ")
     return user_input
@@ -9,6 +10,51 @@ def password_generator(length=10):
     characters = string.ascii_letters + string.digits + string.punctuation
     password = ''.join(random.choice(characters) for i in range(length))
     return password
+
+def own_password():
+    website = input("\nEnter where this password is for: ")
+    password = input("\nEnter the password: ")
+    with open("passwords.txt", "a") as passwords:
+        passwords.write(f"{website} : {password}\n")
+    print(f"\nPassword for {website} was generated successfully.\n")
+
+def gen_password():
+    website = input("\nEnter where this password is for: ")
+    print('')
+    password = password_generator()
+    print(f"Password for {website} was generated successfully.\n")
+    with open("passwords.txt", "a") as passwords:
+        passwords.write(f"{website} : {password}\n")
+
+def get_passwords():
+    print('')
+    with open("passwords.txt", "r") as passwords:
+        print(passwords.read())
+
+def delete_password():
+    website = input("\nEnter where this password is for: ")
+    print('')
+    with open("passwords.txt", "r") as passwords:
+        lines = passwords.readlines()
+
+    with open("passwords.txt", "w") as passwords:
+        for line in lines:
+            if website not in line:
+                passwords.write(line)
+
+def change_password():
+    website = input("\nEnter where this password is for: ")
+    print('')
+    with open("passwords.txt", "r") as passwords:
+        lines = passwords.readlines()
+    with open("passwords.txt", "w") as passwords:
+        for line in lines:
+            if website in line:
+                password = password_generator()
+                print(f"Password for {website} was generated successfully.\n")
+                passwords.write(f"{website} : {password}\n")
+            else:
+                passwords.write(line)
 
 if __name__ == "__main__":
     print("\nWelcome to the password manager!\n")
@@ -19,45 +65,19 @@ if __name__ == "__main__":
         user_input = get_input()
 
         if user_input == "own":
-            website = input("\nEnter where this password is for: ")
-            password = input("\nEnter the password: ")
-            with open("passwords.txt", "a") as passwords:
-                passwords.write(f"{website} : {password}\n")
-            print(f"\nPassword for {website} was generated successfully.\n")
+            own_password()
 
         elif user_input == "gen":
-            website = input("\nEnter where this password is for: ")
-            password = password_generator()
-            with open("passwords.txt", "a") as passwords:
-                passwords.write(f"{website} : {password}\n")
-            print(f"\nPassword for {website} was generated successfully.\n")
-
+            gen_password()
+            
         elif user_input == "get":
-            print('')
-            with open("passwords.txt", "r") as passwords:
-                print(passwords.read())
+            get_passwords()
 
         elif user_input == "del":
-            website = input("\nEnter where this password is for: ")
-            with open("passwords.txt", "r") as passwords:
-                lines = passwords.readlines()
-
-            with open("passwords.txt", "w") as passwords:
-                for line in lines:
-                    if website not in line:
-                        passwords.write(line)
+            delete_password()
 
         elif user_input == "cha":
-            website = input("Enter where this password is for: ")
-            with open("passwords.txt", "r") as passwords:
-                lines = passwords.readlines()
-            with open("passwords.txt", "w") as passwords:
-                for line in lines:
-                    if website in line:
-                        password = password_generator()
-                        passwords.write(f"{website} : {password}\n")
-                    else:
-                        passwords.write(line)
+            change_password()
                 
         elif user_input == "q":
             exit()
