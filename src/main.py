@@ -1,7 +1,6 @@
 import random
 import string
 
-
 def get_input():
     user_input = input("What would you like to do? (own, gen, get, del, cha, q): ")
     return user_input
