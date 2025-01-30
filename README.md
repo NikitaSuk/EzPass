@@ -1,73 +1,91 @@
-A simple command-line password manager built with Python. This tool allows users to store, generate, retrieve, delete, and update passwords for different websites.
+# Password Manager
 
-Features
+A simple command-line password manager written in Python. This tool allows users to store, generate, retrieve, delete, and update passwords for different websites.
 
-🔐 Store Your Own Passwords: Manually enter and save passwords.
+## Features
 
-🔑 Generate Secure Passwords: Automatically create strong passwords.
+- **Store passwords**: Manually enter and save passwords.
+- **Generate passwords**: Create strong, random passwords.
+- **Retrieve passwords**: View saved passwords.
+- **Delete passwords**: Remove stored passwords.
+- **Update passwords**: Replace old passwords with new randomly generated ones.
 
-📜 Retrieve Passwords: View saved passwords for specific websites.
+## Installation
 
-🗑 Delete Passwords: Remove saved passwords.
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/your-username/password-manager.git
+   ```
+2. Navigate to the project directory:
+   ```sh
+   cd password-manager
+   ```
+3. Run the script:
+   ```sh
+   python password_manager.py
+   ```
 
-🔄 Change Passwords: Update stored passwords with a new generated one.
+## Usage
 
-Installation
+When you run the script, you will see the following menu:
 
-Clone the repository:
-
-git clone https://github.com/your-username/password-manager.git
-
-Navigate into the directory:
-
-cd password-manager
-
-Run the script:
-
-python password_manager.py
-
-Usage
-
-Upon running the script, you'll be presented with a menu:
-
+```
 Welcome to the password manager!
 
-If you would like to enter your own password, type 'own'.
-If you would like a password generated for you, type 'gen'.
-If you would like to get a password, type 'get'.
-If you would like to delete a specific password, type 'del'.
-If you would like to change a specific password, type 'cha'.
-If you would like to quit, type 'q'.
+Options:
+- 'own'  : Enter your own password
+- 'gen'  : Generate a random password
+- 'get'  : Retrieve a saved password
+- 'del'  : Delete a password
+- 'cha'  : Change a stored password
+- 'q'    : Quit the program
+```
 
-Commands
+### Commands
 
-``: Manually add a password.
+- **own**: Manually add a password.
+- **gen**: Generate and save a random password.
+- **get**: Retrieve a password.
+  - `one` - Retrieve a password for a specific website.
+  - `all` - Display all stored passwords.
+- **del**: Delete a stored password.
+- **cha**: Change a password with a newly generated one.
+- **q**: Quit the program.
 
-``: Generate and save a random password.
+## Example
 
-``: Retrieve passwords.
+1. **Add a password manually**:
+   ```
+   Enter where this password is for: GitHub
+   Enter the password: mysecurepassword
+   Password for GitHub was saved successfully.
+   ```
 
-one - Retrieve a password for a specific website.
+2. **Generate a password**:
+   ```
+   Enter where this password is for: Twitter
+   Password for Twitter was generated successfully.
+   ```
 
-all - Display all stored passwords.
+3. **Retrieve a password**:
+   ```
+   Enter where this password is for: GitHub
+   GitHub : mysecurepassword
+   ```
 
-``: Delete a stored password.
+## Requirements
 
-``: Change a password with a newly generated one.
+- Python 3.x
 
-``: Quit the program.
+## Security Considerations
 
-Example
+⚠️ **Passwords are stored in plaintext (`passwords.txt`). For better security, consider encrypting stored data.**
 
-Add a password manually:
+## License
 
-Enter where this password is for: GitHub
-Enter the password: mysecurepassword
-Password for GitHub was generated successfully.
+This project is licensed under the [MIT License](LICENSE).
 
-Generate a password:
+## Author
 
-Enter where this password is for: Twitter
-Password for Twitter was generated successfully.
+[Your Name](https://github.com/your-username)
 
-Retrieve a password:
