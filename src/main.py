@@ -4,8 +4,28 @@ from encryption import encrypt_password, decrypt_passwords, load_key
 from cryptography.fernet import Fernet
 
 def get_input():
-    user_input = input("What would you like to do? (own, gen, get, lis, cha, rem, tra, q): ")
+    user_input = input("What would you like to do? (add, view, edit, tra, q): ")
     return user_input
+
+def add_input():
+    print("If you would like to add your own password, type 'own'. If you would like to have a password be generated for you, type 'generate'. If you would like to go back, type 'back'.\n")
+    user_input = input("What would you like to do? (own, generate, back): ")
+    return user_input
+
+def view_input():
+    print("If you would like to get a list of websites you have stored, type 'list'. If you would like to get a password(s), type 'get'. If you would like to go back, type 'back'.\n")
+    user_input = input("What would you like to do? (list, get, back): ")
+    return user_input
+
+def edit_input():
+    print("If you would like to change a specific password, type 'change'. If you would like to move a specific password to trash, type 'remove'. If you would like to go back, type 'back'.\n")
+    user_input = input("What would you like to do? (change, remove, back)")
+    return user_input
+
+def trash_input():
+    print("If you would like to get a list of of websites you have in the trash, type 'look'. If you would like to empty the trash, type 'empty'. If you would like to go back, type 'back'.\n")
+    user_input = input("What would you like to do? (look, empty, back) ")
+    return user_input()
 
 def password_generator(length=12):
     characters = string.ascii_letters + string.digits + string.punctuation
@@ -132,55 +152,124 @@ def restore_all():
     except FileNotFoundError:
         print("\nTrash is empty.\n")
 
+def empty_one():
+    access_trash()
+    website = input("Enter which password you would like to delete from the list above: ")
+    with open('trash.enc', 'rb') as file:
+        trash_lines = file.readlines()
+    
+    with open('trash.enc', 'wb') as file:
+        for line in trash_lines:
+            stored_website, encrypted_password = line.strip().split(b':', 1)
+            if website != stored_website.decode():
+                file.write(line)
+            else:
+                print(f"\nPassword for {website} was permanently deleted.\n")
+
+def empty_all():
+    try:
+        with open('trash.enc', 'w') as file:
+            file.close()
+        print("\nAll passwords in trash were permanently deleted.\n")
+    except FileNotFoundError:
+        print("\nTrash is empty.\n")
+
 if __name__ == "__main__":
     print("\nWelcome to the password manager!\n")
-    print("If you would like to enter your own password, type 'own'. If you would like a password generated for you, type 'gen'. If you would like to get a a list of places you have stores, type 'lis'. If you would like to get a password, type 'get'.")
-    print("If you would like to change a specific password, type 'cha'. If you would like to move a specific password to trash, type 'rem'. If you would like to access the trash, type 'tra'. If you would like to quit, type 'q'.\n")
+    print("If you would like to add a password, type 'add'. If you would like to view passwords or websites, type 'view'.")
+    print("If you would like to change or remove a password, type 'edit'. If you would like to access the trash, type 'trash'. If you would like to quit, type 'q'.\n")
     
-    while True:
+    screen = 0
+
+    while screen == 0:
         user_input = get_input()
 
-        if user_input == "own":
-            own_password()
+        if user_input == "add":
+            screen = 1
+            while screen == 1:
+                user_input = add_input()
 
-        elif user_input == "gen":
-            gen_password()
-            
-        elif user_input == "lis":
-            website_list()
+                if user_input == "own":
+                    own_password()
+                elif user_input == "generate":
+                    gen_password()
+                elif user_input == "back":
+                    screen = 0
 
-        elif user_input == "get":
-            print("\nIf you would like to get a specific password, type 'one'. If you would like all passwords, type 'all'.\n")
-            user_input = input("What would you like to do? (one, all): ")
-            if (user_input == "one"):
-                get_password()
-            elif (user_input == "all"):
-                get_password_list()
+        elif user_input == "view":
+            screen = 1
+            while screen == 1:
+                user_input = view_input()
 
-        elif user_input == "cha":
-            print("\nIf you would like to change a password yourself, type 'own'. If you would like a password generated for you, type 'gen'.\n")
-            user_input = input("What would you like to do? (own, gen): ")
-            if (user_input == "own"):
-                change_password_own()
-            elif (user_input == "gen"):
-                change_password_gen()
-                
-        elif user_input == "rem":
-            remove_password()
+                if user_input == "list":
+                    website_list()
+                elif user_input == "get":
+                    print("\nIf you would like to get a specific password, type 'one'. If you would like all passwords, type 'all'.\n")
+                    user_input = input("What would you like to do? (one, all): ")
 
-        elif user_input == "tra":
-            print("\nIf you would like to access the list of removed passwords, type 'acc'. If you would like to restore a removed password, type 'res'.\n")
-            user_input = input("What would you like to do? (acc, res): ")
-            if user_input == "acc":
+                    if (user_input == "one"):
+                        get_password()
+                        
+                    elif (user_input == "all"):
+                        get_password_list()
+
+                    elif user_input == "back":
+                        screen = 0
+
+        elif user_input == "edit":
+            screen = 1
+            while screen == 1:
+                user_input = edit_input()
+
+                if user_input == "cha":
+                    screen = 2
+                    while screen == 2:
+                        print("\nIf you would like to change a password yourself, type 'own'. If you would like a password generated for you, type 'gen'.\n")
+                        user_input = input("What would you like to do? (own, gen): ")
+                        if (user_input == "own"):
+                            change_password_own()
+                        elif (user_input == "generate"):
+                            change_password_gen()
+                        elif (user_input == "back"):
+                            screen = 1
+                    
+                elif user_input == "remove":
+                    remove_password()
+
+                elif user_input == "back":
+                    screen = 0
+
+        elif user_input == "trash":
+            screen == 1
+            while screen == 1:
+                user_input == trash_input()
+            if user_input == "look":
                 access_trash()
-            elif user_input == "res":
-                print("\nIf you would like to restore a specific password, type 'one'. If you would like to restore all passwords, type 'all'.\n")
-                user_input = input("What would you like to do? (one, all): ")
-                if user_input == "one":
-                    restore_one()
-                elif user_input == "all":
-                    restore_all()
-            
+            elif user_input == "restore":
+                screen = 2
+                while screen == 2:
+                    print("\nIf you would like to restore a specific password, type 'one'. If you would like to restore all passwords, type 'all'.\n")
+                    user_input = input("What would you like to do? (one, all): ")
+                    if user_input == "one":
+                        restore_one()
+                    elif user_input == "all":
+                        restore_all()
+                    elif (user_input == "back"):
+                        screen = 1
+
+            elif user_input == "empty":
+                screen = 3
+                while screen == 3:
+                    print("\nIf you would like to restore a specific password, type 'one'. If you would like to restore all passwords, type 'all'.\n")
+                    if user_input == "one":
+                        empty_one()
+                    elif user_input == "all":
+                        empty_all()
+                    elif (user_input == "back"):
+                            screen = 1
+            elif user_input == "back":
+                screen = 0
+
         elif user_input == "q":
             print(" ")
             exit()
