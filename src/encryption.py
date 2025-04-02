@@ -27,7 +27,6 @@ def encrypt_password(website, password):
 def decrypt_passwords():
     key = load_key()
     f = Fernet(key)
-    
     try:
         with open('passwords.enc', 'rb') as file:
             passwords = []
