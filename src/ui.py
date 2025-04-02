@@ -50,8 +50,11 @@ class PasswordManagerUI:
     def show_passwords(self):
         self.password_list.delete(1.0, tk.END)
         passwords = decrypt_passwords()
-        for website, password in passwords:
-            self.password_list.insert(tk.END, f"Website: {website}\nPassword: {password}\n\n")
+        if not passwords:
+            self.password_list.insert(tk.END, "No passwords saved yet.\n")
+        else:
+            for website, password in passwords:
+                self.password_list.insert(tk.END, f"Website: {website}\nPassword: {password}\n\n")
 
 def main():
     root = tk.Tk()

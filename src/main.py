@@ -1,6 +1,7 @@
 import random
 import string
-from encryption import encrypt_password, decrypt_passwords
+from encryption import encrypt_password, decrypt_passwords, load_key
+from cryptography.fernet import Fernet
 
 def get_input():
     user_input = input("What would you like to do? (own, gen, get, lis, cha, rem, tra, q): ")
@@ -27,8 +28,11 @@ def gen_password():
 def website_list():
     passwords = decrypt_passwords()
     print('')
-    for website, password in passwords:
-        print(f"{website}")
+    if not passwords:
+        print("There are no websites saved")
+    else:
+        for website, password in passwords:
+            print(f"{website}")
     print('')
 
 def get_password():
@@ -82,7 +86,10 @@ def remove_password():
             if website != stored_website:
                 encrypt_password(stored_website, password)
             else:
-                trash_file.write(f"{stored_website}:{password}\n".encode())
+                key = load_key()
+                f = Fernet(key)
+                encrypted_password = f.encrypt(password.encode())
+                trash_file.write(f"{stored_website}:".encode() + encrypted_password + b'\n')
                 print(f"\nPassword for {website} was deleted successfully and moved to trash.\n")
 
 def access_trash():
@@ -90,8 +97,11 @@ def access_trash():
         with open('trash.enc', 'rb') as file:
             print('')
             for line in file:
-                website, password = line.strip().split(b':', 1)
-                print(f"{website.decode()} : {password.decode()}")
+                website, encrypted_password = line.strip().split(b':', 1)
+                key = load_key()
+                f = Fernet(key)
+                decrypted_password = f.decrypt(encrypted_password).decode()
+                print(f"{website.decode()} : {decrypted_password}")
             print('')
     except FileNotFoundError:
         print("\nTrash is empty.\n")
@@ -99,22 +109,26 @@ def access_trash():
 def restore_one():
     access_trash()
     website = input("Enter which password you would like to restore from the list above: ")
-    passwords = decrypt_passwords()
-    with open('trash.enc', 'wb') as trash_file, open('passwords.enc', 'ab') as file:
-        for stored_website, password in passwords:
-            if website != stored_website:
-                encrypt_password(stored_website, password)
+    with open('trash.enc', 'rb') as file:
+        trash_lines = file.readlines()
+    
+    with open('trash.enc', 'wb') as file, open('passwords.enc', 'ab') as passwords_file:
+        for line in trash_lines:
+            stored_website, encrypted_password = line.strip().split(b':', 1)
+            if website != stored_website.decode():
+                file.write(line)
             else:
-                file.write(f"{stored_website}:{password}\n".encode())
+                passwords_file.write(line)
                 print(f"\nPassword for {website} was restored successfully.\n")
 
 def restore_all():
     try:
         with open('trash.enc', 'rb') as trash_file, open('passwords.enc', 'ab') as file:
             for line in trash_file:
-                stored_website, password = line.strip().split(b':', 1)
-                encrypt_password(stored_website.decode(), password.decode())
+                stored_website, encrypted_password = line.strip().split(b':', 1)
+                file.write(line)
                 print(f"\nPassword for {stored_website.decode()} was restored successfully.\n")
+        open('trash.enc', 'w').close()
     except FileNotFoundError:
         print("\nTrash is empty.\n")
 
