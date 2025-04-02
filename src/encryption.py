@@ -29,6 +29,8 @@ def decrypt_passwords():
     f = Fernet(key)
     try:
         with open('passwords.enc', 'rb') as file:
+            if os.path.getsize('passwords.enc') == 0:
+                return []
             passwords = []
             for line in file:
                 website, encrypted_password = line.strip().split(b':', 1)

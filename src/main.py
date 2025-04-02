@@ -1,5 +1,6 @@
 import random
 import string
+import os
 from encryption import encrypt_password, decrypt_passwords, load_key
 from cryptography.fernet import Fernet
 
@@ -121,7 +122,7 @@ def access_trash():
 
 def restore_one():
     access_trash()
-    website = input("Enter which password you would like to restore from the list above: ")
+    website = input("\nEnter which password you would like to restore from the list above: ")
     with open('trash.enc', 'rb') as file:
         trash_lines = file.readlines()
     
@@ -132,22 +133,19 @@ def restore_one():
                 file.write(line)
             else:
                 passwords_file.write(line)
-                print(f"\nPassword for {website} was restored successfully.\n")
+                print(f"\nPassword for {website} was restored successfully.")
 
 def restore_all():
-    try:
-        with open('trash.enc', 'rb') as trash_file, open('passwords.enc', 'ab') as file:
-            for line in trash_file:
-                stored_website, encrypted_password = line.strip().split(b':', 1)
-                file.write(line)
-                print(f"Password for {stored_website.decode()} was restored successfully.\n")
-        open('trash.enc', 'w').close()
-    except FileNotFoundError:
-        print("\nTrash is empty.\n")
+    with open('trash.enc', 'rb') as trash_file, open('passwords.enc', 'ab') as file:
+        for line in trash_file:
+            stored_website, encrypted_password = line.strip().split(b':', 1)
+            file.write(line)
+            print(f"\nPassword for {stored_website.decode()} was restored successfully.")
+    open('trash.enc', 'w').close()
 
 def empty_one():
     access_trash()
-    website = input("Enter which password you would like to delete from the list above: ")
+    website = input("\nEnter which password you would like to delete from the list above: ")
     with open('trash.enc', 'rb') as file:
         trash_lines = file.readlines()
     
@@ -160,12 +158,29 @@ def empty_one():
                 print(f"Password for {website} was permanently deleted.\n")
 
 def empty_all():
+    with open('trash.enc', 'w') as file:
+        file.close()
+    print("\nAll passwords in trash were permanently deleted.\n")
+
+def check_passwords_empty():
     try:
-        with open('trash.enc', 'w') as file:
-            file.close()
-        print("\nAll passwords in trash were permanently deleted.\n")
+        if os.path.getsize('passwords.enc') == 0:
+            print("\nThere are no passwords saved.")
+            return True
+        return False
     except FileNotFoundError:
-        print("\nTrash is empty.\n")
+        print("\nThere are no passwords saved.")
+        return True
+
+def check_trash_empty():
+    try:
+        if os.path.getsize('trash.enc') == 0:
+            print("\nTrash is empty.")
+            return True
+        return False
+    except FileNotFoundError:
+        print("\nTrash is empty.")
+        return True
 
 if __name__ == "__main__":
     print("\nWelcome to the password manager!\n")
@@ -192,6 +207,8 @@ if __name__ == "__main__":
                     screen = 0
 
         elif user_input == "view":
+            if check_passwords_empty():
+                continue
             print("\nIf you'd like to get the website(s) you have stored, type 'list'. If you'd like to get your password(s), type 'get'. If you'd like to go back, type 'back'.")
             screen = 1
             while screen == 1:
@@ -218,6 +235,8 @@ if __name__ == "__main__":
                     screen = 0
 
         elif user_input == "edit":
+            if check_passwords_empty():
+                continue
             print("\nIf you'd like to change a specific password, type 'change'. If you'd like to move a specific password to trash, type 'remove'. If you'd like to go back, type 'back'.")
             screen = 1
             while screen == 1:
@@ -242,6 +261,8 @@ if __name__ == "__main__":
                     screen = 0
 
         elif user_input == "trash":
+            if check_trash_empty():
+                continue
             print("\nIf you'd like to get a list of of websites you have in the trash, type 'look'. If you'd like to restore your password(s), type 'restore'. If you'd like to empty the trash, type 'empty'. If you'd like to go back, type 'back'.")
             screen = 1
             while screen == 1:
@@ -260,6 +281,7 @@ if __name__ == "__main__":
                             restore_one()
                         elif user_input == "all":
                             restore_all()
+                            screen = 0
                         elif (user_input == "back"):
                             screen = 1
 
@@ -273,6 +295,7 @@ if __name__ == "__main__":
                             empty_one()
                         elif user_input == "all":
                             empty_all()
+                            screen = 0
                         elif (user_input == "back"):
                                 screen = 1
 
