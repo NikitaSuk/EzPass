@@ -1,83 +1,160 @@
-# Password Manager
 
-A simple command-line password manager written in Python. This tool allows users to store, generate, retrieve, delete, and update passwords for different websites.
+# EzPass Password Manager
+
+_EzPass Password Manager_ is a lightweight, Python-based application designed to securely manage your passwords. With both a graphical interface (built with Tkinter) and a command-line interface, it offers flexibility for users who prefer either interactive or terminal-based management. The application employs strong encryption using the [cryptography](https://cryptography.io/en/latest/) library (Fernet) to safeguard your stored passwords.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [File Structure](#file-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Graphical User Interface (GUI)](#graphical-user-interface-gui)
+  - [Command-Line Interface (CLI)](#command-line-interface-cli)
+- [How It Works](#how-it-works)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
 
 ## Features
 
-- **Store passwords**: Manually enter and save passwords.
-- **Generate passwords**: Create strong, random passwords.
-- **Retrieve passwords**: View saved passwords.
-- **Delete passwords**: Remove stored passwords.
-- **Update passwords**: Replace old passwords with new randomly generated ones.
+- **Secure Storage:** Encrypts passwords using Fernet symmetric encryption.
+- **Multiple Interfaces:** Choose between a modern Tkinter GUI and a classic command-line interface.
+- **Password Generation:** Quickly generate strong, random passwords.
+- **Password Management:** Easily add, view, edit, and delete passwords.
+- **Trash System:** Moved deleted passwords are stored in a “trash” file for potential restoration.
+
+---
+
+## File Structure
+
+- **`main.py`**  
+  Provides a command-line interface with various options for adding, viewing, editing, and deleting passwords.
+
+- **`ui.py`**  
+  Implements a Tkinter-based GUI for users who prefer a graphical approach. It includes interactive tabs for adding, viewing, editing, and trash management.
+
+- **`encryption.py`**  
+  Handles encryption and decryption operations using Fernet. It is responsible for generating/loading the encryption key and managing the encrypted password files.
+
+---
 
 ## Installation
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/password-manager.git
+1. **Clone the Repository:**
+
+   ```bash
+   git clone https://github.com/yourusername/ezpass-password-manager.git
+   cd ezpass-password-manager
    ```
-2. Navigate to the project directory:
-   ```sh
-   cd password-manager
+
+2. **Set Up a Virtual Environment (Optional but Recommended):**
+
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
    ```
-3. Run the script:
-   ```sh
-   python password_manager.py
+
+3. **Install Dependencies:**
+
+   Make sure you have Python 3 installed. Then install the required package:
+
+   ```bash
+   pip install cryptography
    ```
+
+   _Note: Tkinter is bundled with standard Python distributions. If not, please install it via your package manager._
+
+---
 
 ## Usage
 
-When you run the script, you will see the following menu:
+### Graphical User Interface (GUI)
 
-```
-Welcome to the password manager!
+To launch the interactive GUI:
 
-Options:
-- 'own'  : Enter your own password
-- 'gen'  : Generate a random password
-- 'get'  : Retrieve a saved password
-- 'del'  : Delete a password
-- 'cha'  : Change a stored password
-- 'q'    : Quit the program
+```bash
+python ui.py
 ```
 
-### Commands
+The GUI features four interactive tabs:
 
-- **own**: Manually add a password.
-- **gen**: Generate and save a random password.
-- **get**: Retrieve a password.
-  - `one` - Retrieve a password for a specific website.
-  - `all` - Display all stored passwords.
-- **del**: Delete a stored password.
-- **cha**: Change a password with a newly generated one.
-- **q**: Quit the program.
+- **Add Password:**  
+  Enter the website and either type in or generate a secure password.
 
-## Example
+- **View Passwords:**  
+  Browse through the saved passwords. Use the search bar to filter by website and toggle visibility to show/hide passwords.
 
-1. **Add a password manually**:
-   ```
-   Enter where this password is for: GitHub
-   Enter the password: mysecurepassword
-   Password for GitHub was saved successfully.
-   ```
+- **Edit Passwords:**  
+  Select a website from the list, then update or regenerate the password as needed.
 
-2. **Generate a password**:
-   ```
-   Enter where this password is for: Twitter
-   Password for Twitter was generated successfully.
-   ```
+- **Trash:**  
+  Manage deleted passwords. Restore accidentally deleted items or permanently remove them.
 
-3. **Retrieve a password**:
-   ```
-   Enter where this password is for: GitHub
-   GitHub : mysecurepassword
-   ```
+### Command-Line Interface (CLI)
 
-## Requirements
+For users who prefer the terminal, run:
 
-- Python 3.x
+```bash
+python main.py
+```
 
-## Security Considerations
+Follow the interactive prompts:
 
-⚠️ **Passwords are stored in plaintext (`passwords.txt`). For better security, consider encrypting stored data.**
+1. **Add:**  
+   Choose to add your own password or generate one automatically.
 
+2. **View:**  
+   List saved websites or display specific passwords.
+
+3. **Edit:**  
+   Change an existing password or move a password to the trash.
+
+4. **Trash:**  
+   View, restore, or permanently delete trashed passwords.
+
+Each option is designed to guide you through the process with clear instructions, making password management simple and secure.
+
+---
+
+## How It Works
+
+- **Encryption:**  
+  All passwords are encrypted before being stored in the `passwords.enc` file. The encryption key is generated once and stored in `secret.key`. This ensures that even if the encrypted file is compromised, the passwords remain secure.
+
+- **Trash Mechanism:**  
+  When a password is removed, it is not immediately deleted. Instead, it is moved to a `trash.enc` file, giving you a chance to restore it if needed.
+
+- **User Experience:**  
+  Both interfaces offer an interactive experience:
+  - The GUI uses modern widgets and tabs for an intuitive workflow.
+  - The CLI provides step-by-step instructions and interactive prompts to perform actions.
+
+---
+
+## Contributing
+
+Contributions are welcome! If you have ideas for improvements or have found a bug, feel free to create an issue or submit a pull request on GitHub.
+
+1. Fork the repository.
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Create a new Pull Request.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+_Enjoy using EzPass Password Manager to keep your digital life secure and organized!_
+
+--- 
+
+This README provides a comprehensive overview of the project along with clear, step-by-step instructions on how to install and use the tool, both via GUI and CLI.
