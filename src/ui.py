@@ -11,6 +11,7 @@ class PasswordManagerUI:
         self.root = root
         self.root.title("EzPass Password Manager")
         self.root.geometry("600x700")
+        self.root.minsize(800, 600)
         self.root.configure(bg='#f0f0f0')
         
         style = ttk.Style()
@@ -122,57 +123,58 @@ class PasswordManagerUI:
         edit_frame = ttk.LabelFrame(self.edit_tab, text="Edit Passwords", padding="10")
         edit_frame.pack(expand=True, fill='both', padx=10, pady=5)
         
-        ttk.Label(edit_frame, text="Select Website:").pack(pady=5)
+        content_frame = ttk.Frame(edit_frame)
+        content_frame.pack(side='left', expand=True, fill='both', padx=5)
+        
+        ttk.Label(content_frame, text="Select Website:").pack(pady=5)
         self.edit_website_var = tk.StringVar()
-        self.edit_website_combo = ttk.Combobox(edit_frame, textvariable=self.edit_website_var)
+        self.edit_website_combo = ttk.Combobox(content_frame, textvariable=self.edit_website_var)
         self.edit_website_combo.pack(pady=5)
         
-        ttk.Label(edit_frame, text="New Password:").pack(pady=5)
-        self.edit_password_entry = ttk.Entry(edit_frame, width=40, show="*")
+        ttk.Label(content_frame, text="New Password:").pack(pady=5)
+        self.edit_password_entry = ttk.Entry(content_frame, width=40, show="*")
         self.edit_password_entry.pack(pady=5)
         
         button_frame = ttk.Frame(edit_frame)
-        button_frame.pack(pady=10)
+        button_frame.pack(side='right', fill='y', padx=5)
         
-        button_frame1 = ttk.Frame(edit_frame)
-        button_frame1.pack(pady=5)
-        ttk.Button(button_frame1, text="Enter", 
-                  command=self.change_password).pack(side='left', padx=5)
-        ttk.Button(button_frame1, text="Generate New Password", 
-                  command=self.generate_new_password).pack(side='left', padx=5)
-        
-        button_frame2 = ttk.Frame(edit_frame)
-        button_frame2.pack(pady=5)
-        ttk.Button(button_frame2, text="Move to Trash", 
-                  command=self.move_to_trash).pack(side='left', padx=5)
+        ttk.Button(button_frame, text="Enter", 
+                  command=self.change_password).pack(pady=5)
+        ttk.Button(button_frame, text="Generate New Password", 
+                  command=self.generate_new_password).pack(pady=5)
+        ttk.Button(button_frame, text="Move to Trash", 
+                  command=self.move_to_trash).pack(pady=5)
         
     def setup_trash_tab(self):
         trash_frame = ttk.LabelFrame(self.trash_tab, text="Trash", padding="10")
         trash_frame.pack(expand=True, fill='both', padx=10, pady=5)
-
-        self.trash_list = ttk.Treeview(trash_frame, columns=('Website', 'Password'), 
+        
+        content_frame = ttk.Frame(trash_frame)
+        content_frame.pack(side='left', expand=True, fill='both', padx=5)
+        
+        self.trash_list = ttk.Treeview(content_frame, columns=('Website', 'Password'), 
                                      show='headings', height=15)
         self.trash_list.heading('Website', text='Website')
         self.trash_list.heading('Password', text='Password')
         self.trash_list.pack(expand=True, fill='both', pady=5)
-
-        button_frame = ttk.Frame(trash_frame)
-        button_frame.pack(pady=10)
         
         self.show_trash_passwords_var = tk.BooleanVar(value=False)
-        ttk.Checkbutton(button_frame, text="Show Passwords", 
+        ttk.Checkbutton(content_frame, text="Show Passwords", 
                        variable=self.show_trash_passwords_var,
-                       command=self.toggle_trash_password_visibility).pack(side='left', padx=5)
+                       command=self.toggle_trash_password_visibility).pack(pady=5)
+        
+        button_frame = ttk.Frame(trash_frame)
+        button_frame.pack(side='right', fill='y', padx=5)
+        
         ttk.Button(button_frame, text="Restore Selected", 
-                  command=self.restore_selected).pack(side='left', padx=5)
+                  command=self.restore_selected).pack(pady=5)
         ttk.Button(button_frame, text="Restore All", 
-                  command=self.restore_all).pack(side='left', padx=5)
+                  command=self.restore_all).pack(pady=5)
         ttk.Button(button_frame, text="Delete Selected", 
-                  command=self.delete_selected).pack(side='left', padx=5)
+                  command=self.delete_selected).pack(pady=5)
         ttk.Button(button_frame, text="Empty Trash", 
-                  command=self.empty_trash).pack(side='left', padx=5)
-
-        ttk.Button(trash_frame, text="Refresh", 
+                  command=self.empty_trash).pack(pady=5)
+        ttk.Button(button_frame, text="Refresh", 
                   command=self.refresh_trash).pack(pady=5)
         
     def toggle_trash_password_visibility(self):
@@ -204,8 +206,16 @@ class PasswordManagerUI:
             if ' ' in website or ' ' in password:
                 messagebox.showerror("Error", "Spaces are not allowed in website or password")
                 return
+                
+            passwords = decrypt_passwords()
+            base_website = website
+            counter = 2
+            while any(w == website for w, _ in passwords):
+                website = f"{base_website}{counter}"
+                counter += 1
+                
             encrypt_password(website, password)
-            messagebox.showinfo("Success", "Password added successfully!")
+            messagebox.showinfo("Success", f"Password added successfully for {website}!")
             self.website_entry.delete(0, tk.END)
             self.password_entry.delete(0, tk.END)
             self.refresh_passwords()

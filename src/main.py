@@ -32,6 +32,18 @@ def password_generator(length=12):
 def own_password():
     website = input("\nEnter where this password is for: ")
     password = input("\nEnter the password: ")
+    
+    if ' ' in website or ' ' in password:
+        print("\nSpaces are not allowed in website or password")
+        return
+        
+    passwords = decrypt_passwords()
+    base_website = website
+    counter = 2
+    while any(w == website for w, _ in passwords):
+        website = f"{base_website}{counter}"
+        counter += 1
+        
     encrypt_password(website, password)
     print(f"\nPassword for {website} was stored successfully.")
 
@@ -39,6 +51,18 @@ def gen_password():
     website = input("\nEnter where this password is for: ")
     print('')
     password = password_generator()
+    
+    if ' ' in website:
+        print("\nSpaces are not allowed in website")
+        return
+        
+    passwords = decrypt_passwords()
+    base_website = website
+    counter = 2
+    while any(w == website for w, _ in passwords):
+        website = f"{base_website}{counter}"
+        counter += 1
+        
     encrypt_password(website, password)
     print(f"Password for {website} was generated successfully.")
 
